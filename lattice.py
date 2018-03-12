@@ -20,15 +20,17 @@ def create_lattice(shape, concs_1, concs_2):
     concs_1_cum = np.cumsum(concs_1)
     concs_2_cum = np.cumsum(concs_2)
     # initial network
-    grid_1 = np.random.random((l*L)/2).reshape((L/2, l))
+    grid_1 = np.random.random((l*L)//2).reshape((L//2, l))
     lattice_1 = np.empty_like(grid_1, dtype=np.uint8)
     lattice_1[grid_1 < concs_1_cum[0]] = 0
     lattice_1[np.logical_and(grid_1>=concs_1_cum[0], grid_1<concs_1_cum[1])] = 1
     lattice_1[grid_1 >= concs_1_cum[1]] = 2
-    grid_2 = np.random.random((l*L)/2).reshape((L/2, l))
+    grid_2 = np.random.random((l*L)//2).reshape((L//2, l))
     lattice_2 = np.empty_like(grid_2, dtype=np.uint8)
     lattice_2[grid_2 < concs_2_cum[0]] = 0
     lattice_2[np.logical_and(grid_2>=concs_2_cum[0], grid_2<concs_2_cum[1])] = 1
     lattice_2[grid_2 >= concs_2_cum[1]] = 2
     lattice = np.vstack((lattice_1, lattice_2))
     return lattice
+
+

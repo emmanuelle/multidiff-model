@@ -39,24 +39,21 @@ def evolve_lattice(np.ndarray[np.uint8_t, ndim=2] lattice,
     cdef int l = lattice.shape[1]
     cdef int step_index, perm_index
     cdef int i, j, i_move, j_move, at_1, at_2, direction
-    cdef np.ndarray[np.uint8_t, ndim=3] save_lattices = np.empty((nb_steps, 
-                                                    L, l), dtype=np.uint8)
     cdef np.ndarray[np.int64_t, ndim=1] perm
     cdef np.ndarray[np.float64_t, ndim=1] trans_rate
-    cdef np.ndarray[np.uint8_t, ndim=2] directions = np.random.randint(0, 4,
-                            L*l * nb_steps).reshape((nb_steps, L*l)).astype(np.uint8)
+    cdef np.ndarray[np.uint8_t, ndim=1] directions
     cdef np.ndarray[np.int64_t, ndim=1] vert_move = np.array([0, 0, -1, 1],
                                                         dtype=np.int64)
     cdef np.ndarray[np.int64_t, ndim=1] horiz_move = np.array([-1, 1, 0, 0],
                                                         dtype=np.int64)
     for step_index in range(nb_steps):
-        save_lattices[step_index] = lattice
         perm = np.random.permutation(L*l)
         trans_rate = np.random.random(L*l)
+        directions = np.random.randint(0, 4, L*l).astype(np.uint8)
         for perm_index in perm:
             i = perm_index / l
             j = perm_index - i * l
-            direction = directions[step_index, perm_index]
+            direction = directions[perm_index]
             i_move = (i + vert_move[direction])
             i_move = clip_warp_plus(i_move, L)
             i_move = clip_warp_minus(i_move, L)
@@ -68,4 +65,4 @@ def evolve_lattice(np.ndarray[np.uint8_t, ndim=2] lattice,
             if trans_rate[perm_index] < rates[at_1, at_2]:
                 lattice[i, j] = at_2
                 lattice[i_move, j_move] = at_1
-    return save_lattices
+    return lattice
